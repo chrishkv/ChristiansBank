@@ -1,0 +1,34 @@
+version: '3.9'
+services:
+  mssql:
+    container_name: db-cuenta-movimiento
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    restart: unless-stopped
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Pass23456789"
+    ports:
+      - 1434:1433
+    volumes:
+      - my-data:/var/opt/mssql
+    networks:
+      - my_network_bank
+
+  api:
+    container_name: cuenta-movimiento
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - mssql
+    ports:
+      - "81:80"
+    networks:
+      - my_network_bank
+
+volumes:
+  my-data:
+
+networks:
+  my_network_bank:

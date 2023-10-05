@@ -1,0 +1,35 @@
+version: '3.9'
+
+services:
+  mssql:
+    container_name: db-cliente-persona
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    restart: unless-stopped
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Pass12345678"
+    ports:
+      - 1433:1433
+    volumes:
+      - my-volume:/var/opt/mssql
+    networks:
+      - my_network_bank
+
+  api:
+    container_name: client-persona
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - mssql
+    ports:
+      - "80:80"
+    networks:
+      - my_network_bank
+
+volumes:
+  my-volume:
+
+networks:
+  my_network_bank:
